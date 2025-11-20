@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Scanner - AI Nutrition Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="min-h-screen overflow-x-hidden">
+    <div class="fixed inset-0 gradient-bg -z-10">
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl relative z-10">
+        <div class="text-center mb-12 fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                Samsara Wellness Food Scanner
+            </h1>
+            <p class="text-xl text-white/90 max-w-2xl mx-auto">
+                Instantly analyze your meals with AI-powered nutrition insights
+            </p>
+        </div>
+
+        <div class="glass-effect rounded-3xl shadow-2xl p-8 md:p-12 fade-in">
+
+            <label for="fileInput" id="uploadSection"
+                class="block upload-hover border-3 border-dashed border-purple-300 rounded-2xl p-16 text-center transition-all duration-300 bg-gradient-to-br from-purple-50 to-blue-50">
+                <input type="file" id="fileInput" accept="image/*" class="hidden">
+                <div class="max-w-md mx-auto pointer-events-none">
+                    <div
+                        class="w-24 h-24 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">Upload Your Food Photo</h3>
+                    <p class="text-gray-600 mb-4">Drag & drop or click to select</p>
+                    <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span>Supports: JPG, PNG • Max size: 16MB</span>
+                    </div>
+                </div>
+            </label>
+
+            <div id="previewSection" class="hidden space-y-6">
+                <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+                    <img id="imagePreview" class="w-full h-96 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+                    <button id="clearBtn"
+                        class="absolute top-4 right-4 bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-all hover:scale-110 shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <button id="analyzeBtn"
+                    class="w-full btn-primary text-white py-4 rounded-xl font-bold text-lg shadow-xl flex items-center justify-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Analyze Nutrition
+                </button>
+            </div>
+
+            <div id="loadingSection" class="hidden text-center py-16">
+                <div class="inline-block">
+                    <div class="w-20 h-20 border-4 border-purple-200 border-t-purple-600 rounded-full loading"></div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mt-6 mb-2">Analyzing Your Food...</h3>
+                <p class="text-gray-600">Our AI is identifying ingredients and calculating nutrition</p>
+                <div class="flex items-center justify-center gap-2 mt-6">
+                    <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                    <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.1s;">
+                    </div>
+                    <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.2s;">
+                    </div>
+                </div>
+            </div>
+
+            <div id="errorSection"
+                class="hidden bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl px-6 py-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h4 class="font-bold text-red-800 mb-1">Analysis Failed</h4>
+                        <p id="errorMessage" class="text-red-700"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultsSection" class="hidden space-y-6"></div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
